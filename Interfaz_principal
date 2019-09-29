@@ -27,29 +27,62 @@ import javax.imageio.ImageIO;
 
 
 
-
+/* 
+Esta clase contiene toda la solución del programa, principalmente se puede mencionar métodos relacionados con
+el inicio de la interfaz y el resto de métodos se dividen entre las acciones de los botones y el movimiento de
+las imagenes al ser insertadas.
+*/
 public class Interfaz_principal extends Application {
-    
     
     LinkedList listadoble = new LinkedList();
     Pane root = new Pane();
 
  
-    
+    /*
+    El primer método se encargar de inicializar todo lo que contiene la clase Interfaz_principal, por lo 
+    tanto la descripción es igual a la de la clase.
+    */
     @Override
     public void start(Stage primaryStage) {
         Button boton = new Button();  //Crear un botón
         boton.setText("Calcular");  //Darle un texto al botón
         boton.setOnAction(new EventHandler<ActionEvent>() { //La acción que genera el boton al ser pulsado
-            
+            /*
+            Este método se encarga de mostrar la tabla al tener el circuito completo, posee de entrada los 
+            elementos de las listas listadoble, entradas, salidas, para poder generar los respectivos datos 
+            de la tabla, la solución se genera mediante la iteración y los condicionales.
+            */
             @Override
             public void handle(ActionEvent event) {
-                System.out.println(listadoble);
+                int e = (int) Math.pow(2, listadoble.size());
+                int[][] matriz = new int[listadoble.size()*2][e];
+                int i = 0;
+                while(i==0){
+                    for (int j=0; j <= (e/2-1); j++){
+                        matriz[i][j] = 1;
+                    };
+                    for (int j=e; j>e/2; j--){
+                        matriz[i][j] = 0;
+                    };
+                };
+                while (i!=0){
+                    
+            };
+                System.out.println(matriz);
             }
         });
         Button boton2 = new Button();
         boton2.setText("Insetar Herramienta");
         boton2.setOnAction(new EventHandler<ActionEvent>(){
+            /*
+            Este método se encarga de al preisonar el boton insertar las imagenes, por consiguiente tenemos:
+            *Entradas son los nombres de la imagen, las extensiones permitidas y la posición en la que lo 
+            queremos colocar
+            *Como implementaciones tenemos el uso del filechooser, el uso de imageview, el uso de bufferedimage
+            además de una variable que obtiene el nombre para la linkedlist.
+            *Como salidas obtenemos la imagen cargada en la posición que le asignamos.
+            Además como evento extra dentro de la función esta el DragandDrop.
+            */
         @Override
         public void handle(ActionEvent t) {
             FileChooser fileChooser = new FileChooser();
@@ -67,16 +100,19 @@ public class Interfaz_principal extends Application {
                 double i = 10;
                 double y = 10;
                 BufferedImage bufferedImage = ImageIO.read(file);
-                String prueba = file.getName();
+                String nombre = file.getName();
                 Image image = SwingFXUtils.toFXImage(bufferedImage, null);
                 ImageView Mi_vista = new ImageView();
                 Mi_vista.setImage(image);
                 Mi_vista.setLayoutX(i);
                 Mi_vista.setLayoutY(y);
                 root.getChildren().add(Mi_vista);
-                listadoble.addLast(prueba);
+                listadoble.addLast(nombre);
                 
                 Mi_vista.setOnDragDetected(new EventHandler<MouseEvent>(){
+                    /*
+                    Se encarga de crear un clipboardcontent el cual añade en el portapapeles la imagen que va a ser movida.
+                    */
                 @Override
                 public void handle(MouseEvent evento){
                     Dragboard db = Mi_vista.startDragAndDrop(TransferMode.MOVE);
@@ -89,6 +125,9 @@ public class Interfaz_principal extends Application {
                     }         
                 });
                 root.setOnDragOver(new EventHandler<DragEvent>(){
+                    /*
+                    Se encarga de verificar si el portapapeles tiene imagenes y aprobar el movimiento del mouse.
+                    */
                    @Override
                    public void handle(DragEvent drag){
                       Dragboard db3 = drag.getDragboard();
@@ -99,67 +138,53 @@ public class Interfaz_principal extends Application {
                    } 
                 });
                 root.setOnDragDropped(new EventHandler<DragEvent>(){
+                    /*
+                    Se encarga de obtener la imagen del portapapeles y colocarla respecto a los atributos x y y, además lo añade al 
+                    pane y hace una verificación si se completo el arrastramiento de la imagen.
+                    */
                   @Override
                   public void handle(DragEvent drop){
                       Dragboard db2 = drop.getDragboard();
                       double x = drop.getSceneX();
                       double y = drop.getSceneY();
-                      
-                      //ImageView nueva = Mi_vista;
                       Mi_vista.setImage(db2.getImage());
                       Mi_vista.setX(x-5); // En caso de que la imagen se corra ante el drag and drop ir smanod o restando pixeles
                       Mi_vista.setY(y-5);
-                      
-                      
-                      
                       root.getChildren().add(Mi_vista);
                       drop.setDropCompleted(true);
                       drop.consume();
                   }
                 });
-                
-      
             } 
             catch (IOException ex) {
                 Logger.getLogger(Interfaz_principal.class.getName()).log(Level.SEVERE, null, ex);
             }
- 
         }
     });  
-        Button boton4 = new Button();
-        boton4.setText("Or");
-       // boton4.setOnAction(lineas);
-            
-
-        Line div_1 = new Line(1190,0, 1190, 768);
+       /*
+        Estas lineas de código se encargan de darles el valor de x y y a los botones, además de añadir al pane los botones y las 
+        línea divisora, además añade el pane a un scene y el primary stage obtiene el scene y lo muestra.
+        */
+       Line div_1 = new Line(1190,0, 1190, 768); //Crear una línea en el pane
         
  
         
-        boton.setLayoutX(1200);
-        boton.setLayoutY(600);
-        
+        boton.setLayoutX(1200); //el eje x donde se coloca el botón
+        boton.setLayoutY(600);  //el eje y donde se coloca el botón
         boton2.setLayoutX(1200);
         boton2.setLayoutY(10);
-        
-        
-        root.getChildren().add(boton);
+        root.getChildren().add(boton); //Añadir el botón al Pane
         root.getChildren().add(boton2);
         root.getChildren().add(div_1);
-        
-        Scene scene1 = new Scene(root, 1366, 700);
-
-        
-        
+        Scene scene1 = new Scene(root, 1366, 700);  //Crear una instancia de scene para mostrar los datos
         primaryStage.setTitle("Circuitos Integrados");
         primaryStage.setScene(scene1);
         primaryStage.show();
-        
-        
-        
     }
-    
+    /*
+    El main que ejecuta todas las acciones del programa.
+    */
     public static void main(String[] args) {
         launch(args);
-    }
-    
+    }   
 }
